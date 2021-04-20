@@ -21,7 +21,7 @@ export const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
   const [isStarted, setIsStarted] = useState(false);
   const [progress, setProgress] = useState(1);
 
-  const vibrate = () => {``
+  const vibrate = () => {
     if (Platform.OS === 'ios') {
       const interval = setInterval(() => Vibration.vibrate(), 1000);
       setTimeout(() => clearInterval(interval), 10000);
