@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, Vibration, Platform } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 import { useKeepAwake } from 'expo-keep-awake';
+import { Audio } from 'expo-av';
 
 import { colors } from '../../utils/color';
 import { spacing } from '../../utils/sizes';
@@ -13,6 +14,8 @@ const DEFAULT_TIME = 0.1;
 
 export const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
   useKeepAwake();
+
+  const soundObject = new Audio.Sound();
 
   const [minutes, setMinutes] = useState(DEFAULT_TIME);
   const [isStarted, setIsStarted] = useState(false);
@@ -32,12 +35,18 @@ export const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
     setProgress(progress);
   };
 
-  const onEnd = () => {
-    vibrate();
-    setMinutes(DEFAULT_TIME);
-    setProgress(1);
-    setIsStarted(false);
-    onTimerEnd();
+  const onEnd = async () => {
+    try {
+      await soundObject.loadAsync(require('../../../assets/bell.mp3'));
+      await soundObject.playAsync();
+      vibrate();
+      setMinutes(DEFAULT_TIME);
+      setProgress(1);
+      setIsStarted(false);
+      onTimerEnd();
+    } catch (error) {
+      console.error('Error: ' + error)
+    }
   };
 
   const changeTime = (min) => {
